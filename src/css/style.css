@@ -1,0 +1,44 @@
+@charset "UTF-8";
+
+#container {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+
+#main
+{
+    width: 90%;
+    height: 90%;
+    display: inline-block;
+    text-align: center;
+}
+
+#top h1
+{
+    margin-bottom: 3%;
+}
+
+.main-page .block
+{
+    display: inline-block;
+    width: 95%;
+    height: 95%;
+    margin: 1.5% 0;
+	padding: 0.5% 1%;
+	border-width: 2px;
+    border-color: #aaa;
+    border-style: outset;
+}
+
+.page .slide
+{
+    display: inline-block;
+    width: 95%;
+    height: 95%;
+    margin: 1.5% 0;
+	padding: 0.5% 1%;
+	border-width: 2px;
+    border-color: #aaa;
+    border-style: outset;
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+    <script src="js/header.js" type="text/javascript"></script>
+    <script src="https://cdn.zoomcharts-cloud.com/1/latest/zoomcharts.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="page">
+    <div id="container">
+        <div id="main">
+            <div id="top">
+                <h1>상세 페이지</h1>
+                <span id="first" class="slide"><canvas id="popChart"></canvas></span>
+                <span id="second" class="slide"><canvas id="lineChart"></canvas></span>
+                <span id="third" class="slide"><div id="geoChart"></div></span>
+                <br>
+                <input type="radio" name="select" value="1" onclick="slideOnOff(this.value);" checked/> <label for="1번">1번</label>
+                <input type="radio" name="select" value="2" onclick="slideOnOff(this.value);"/> <label for="2번">2번</label>
+                <input type="radio"  name="select" value="3" onclick="slideOnOff(this.value);"/> <label for="3번">3번</label>
+            </div>
+        </div>
+        <br>
+        <a type="button" href="index.html">메인페이지</a>
+    </div>
+    <script type="text/javascript" src="js/page.js"></script>
+</body>
+</html>
