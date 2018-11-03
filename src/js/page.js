@@ -121,12 +121,14 @@ function geoChart(){
         data: {
             preloaded: {
                 nodes: [
+                    // 노드 - 위도 경도를 다 찍어야한다
                     { id: "Squaw Valley", coordinates: [-119.181449, 36.707146] }, // long, lat
                     { id: "Atlanta", coordinates: [-84.388846, 33.752504] },
                     { id: "New York", coordinates: [-73.996705, 40.74838] },
                     { id: "Lake Placid", coordinates: [-81.364918, 27.294474] }
                 ],
                 links: [
+                    // 링크
                     { from: "New York", to: "Atlanta", drivingTime: "13 hours 3 mins" },
                     { from: "New York", to: "Squaw Valley", drivingTime: "1 day 18 hours" },
                     { from: "New York", to: "Lake Placid", drivingTime: "17 hours 33 mins" },
@@ -136,6 +138,7 @@ function geoChart(){
             }
         },
         events: {
+            // 클릭 이벤트! 누르면 정보를 띄울수 있을것으로 생각됨
             onClick: function (event, args) {
                 if (args.clickNode) alert("You clicked on " + args.clickNode.data.id + ".");
                 if (args.clickLink) alert("You clicked on a link.");
@@ -143,6 +146,7 @@ function geoChart(){
         },
         layers: [
             {
+                // 스타일을 결정하는 부분
                 name: "Points",
                 type: "items",
                 style: {
@@ -169,11 +173,12 @@ function geoChart(){
             }
         ],
         navigation: {
+            // 처음 로딩되었을때 보일 지도 위치를 위경도로 지정, 기본 줌 상태도 지정
             initialLat: 35.04409,
             initialLng: -90.246213,
             initialZoom: 4,
             minZoom: 4
-        },
+        },  // 더블클릭 불가능 지정
         advanced: { pointer: { noClickOnDoubleClick: false } }
     };
 
@@ -182,8 +187,8 @@ function geoChart(){
 }
 
 $(document).ready(function () {
-    slideOnOff(1);
     barChart();
     lineChart();
     geoChart();
+    slideOnOff(3);
 });
