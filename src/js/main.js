@@ -1,4 +1,4 @@
-
+// 첫화면 자바스크립트
 $(document).ready(function () {
     // 파이 차트
     var half_pie = document.getElementById("rank");
