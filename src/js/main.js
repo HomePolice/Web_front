@@ -2,7 +2,7 @@
 $(document).ready(function () {
     // 파이 차트
     var half_pie = document.getElementById("rank");
-    var score = 40;
+    var score = 70;
     var myChart = new Chart(half_pie, {
         type: 'pie',
         data: {

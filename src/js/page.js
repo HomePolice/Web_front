@@ -42,7 +42,7 @@ function barChart(){
         hoverBorderWidth: 0
     };
     
-    var chartOptions = {
+    var barchartOptions = {
         scales: {
         yAxes: [{
             barPercentage: 0.5
@@ -61,7 +61,7 @@ function barChart(){
         labels: ["1.1.1.1", "2.2.2.2", "114.114.114.114", "213.10.189.76", "192.168.0.1"],
         datasets: [densityData],
         },
-        options: chartOptions
+        options: barchartOptions
     });
 }
 
@@ -99,7 +99,7 @@ function lineChart(){
         ]
     };
 
-    var chartOptions = {
+    var linechartOptions = {
         title: {
           display: true,
           text: '날짜별 각 IP 패킷 데이터 발생 수'
@@ -109,14 +109,14 @@ function lineChart(){
     var linechart = new Chart(lineCanvas, {
         type: 'line',
         data:lineData,
-        options: chartOptions
+        options: linechartOptions
     });
 }
 
 // This is zoomchart part, not working
 function geoChart(){
     var options = {
-        area: { height: 500},
+        area: { height: 700},
         container: document.getElementById("geoChart"),
         data: {
             preloaded: {
