@@ -146,7 +146,7 @@ function geoChart(){
         },
         layers: [
             {
-                // 스타일을 결정하는 부분
+                // 스타일을 결정하는 부분 입니다.
                 name: "Points",
                 type: "items",
                 style: {
