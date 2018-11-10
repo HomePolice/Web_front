@@ -18,83 +18,107 @@ function slideOnOff(value){
 }
 
 function barChart(){
-    var popCanvas = $("#popChart");
-
-    // 세로 바 차트
-    var densityData = {
-        label: 'IP 별 패킷 데이터 발생 수',
-        data: [150, 34, 76, 118, 52],
-        backgroundColor: [
-        'rgba(0, 99, 132, 0.6)',
-        'rgba(30, 99, 132, 0.6)',
-        'rgba(60, 99, 132, 0.6)',
-        'rgba(90, 99, 132, 0.6)',
-        'rgba(120, 99, 132, 0.6)'
-        ],
-        borderColor: [
-        'rgba(0, 99, 132, 1)',
-        'rgba(30, 99, 132, 1)',
-        'rgba(60, 99, 132, 1)',
-        'rgba(90, 99, 132, 1)',
-        'rgba(120, 99, 132, 1)'
-        ],
-        borderWidth: 2,
-        hoverBorderWidth: 0
+    var trace1 = {
+        y: [0.75, 5.25, 5.5, 6, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93, 9.2, 9.5, 10, 10.25, 11.5, 12, 16, 20.90, 22.3, 23.25],
+        type: 'box',
+        name: '213.17.0.45',
+        marker: {
+          color: 'rgb(8,81,156)',
+          outliercolor: 'rgba(219, 64, 82, 0.6)',
+          line: {
+            outliercolor: 'rgba(219, 64, 82, 1.0)',
+            outlierwidth: 2
+          }
+        },
+        boxpoints: 'suspectedoutliers'
+    };
+      
+    var trace2 = {
+        y: [0.75, 5.25, 5.5, 6, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93, 9.2, 9.5, 10, 10.25, 11.5, 12, 16, 20.90, 22.3, 23.25],
+        type: 'box',
+        name: '114.114.114.114',
+        marker: {
+          color: 'rgb(8,81,156)',
+          outliercolor: 'rgba(219, 64, 82, 0.6)',
+          line: {
+            outliercolor: 'rgba(219, 64, 82, 1.0)',
+            outlierwidth: 2
+          }
+        },
+        boxpoints: 'suspectedoutliers'
+    };
+      
+    var trace3 = {
+        y: [0.75, 5.25, 5.5, 6, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93, 9.2, 9.5, 10, 10.25, 11.5, 12, 16, 20.90, 22.3, 23.25],
+        type: 'box',
+        name: '2.2.2.2',
+        marker: {
+          color: 'rgb(8,81,156)',
+          outliercolor: 'rgba(219, 64, 82, 0.6)',
+          line: {
+            outliercolor: 'rgba(219, 64, 82, 1.0)',
+            outlierwidth: 2
+          }
+        },
+        boxpoints: 'suspectedoutliers'
+    };
+      
+    var trace4 = {
+        y: [0.75, 5.25, 5.5, 6, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93, 9.2, 9.5, 10, 10.25, 11.5, 12, 16, 20.90, 22.3, 23.25],
+        type: 'box',
+        name: '1.1.1.1',
+        marker: {
+          color: 'rgb(8,81,156)',
+          outliercolor: 'rgba(219, 64, 82, 0.6)',
+          line: {
+            outliercolor: 'rgba(219, 64, 82, 1.0)',
+            outlierwidth: 2
+          }
+        },
+        boxpoints: 'suspectedoutliers'
     };
     
-    var barchartOptions = {
-        scales: {
-        yAxes: [{
-            barPercentage: 0.5
-        }]
-        },
-        elements: {
-        rectangle: {
-            borderSkipped: 'left',
-        }
-        }
+    var data = [trace1, trace2, trace3, trace4];
+      
+    var layout = {
+        title: 'Box Plot Styling Outliers'
     };
-    
-    var barChart = new Chart(popCanvas, {
-        type: 'horizontalBar',
-        data: {
-        labels: ["1.1.1.1", "2.2.2.2", "114.114.114.114", "213.10.189.76", "192.168.0.1"],
-        datasets: [densityData],
-        },
-        options: barchartOptions
-    });
+      
+    Plotly.newPlot('popChart', data, layout);
 }
 
 function lineChart(){
     var lineCanvas = $("#lineChart");
 
+    let counts = [282,350,411,502,635];
+    let MIN = [], MAX = [];
+    for(let i = 0; i < counts.length; i++){
+        MIN.push(counts[i] * 0.8);
+        MAX.push(counts[i] * 1.2);
+    }
+    MAX[3] = MAX[3] - 100;
+    MAX[4] = MAX[3];
+    MIN[4] = MIN[4] - 200;
+
     var lineData = {
         labels: ["10/29","10/30","10/31","11/1","11/2"],
         datasets: [{ 
-            data: [86,114,106,106,107],
-            label: "1.1.1.1",
-            borderColor: "#3e95cd",
-            fill: false
-          }, { 
-            data: [282,350,411,502,635],
+            backgroundColor: 'rgba(241, 95, 95, 0.5)',
+            data: MAX,
+            label: "MAX",
+            borderColor: "#FF0011",
+            fill: 'end'
+          }, {
+            data: counts,
             label: "2.2.2.2",
-            borderColor: "#8e5ea2",
+            borderColor: "#22AA22",
             fill: false
           }, { 
-            data: [168,170,178,190,203],
-            label: "114.114.114.114",
-            borderColor: "#3cba9f",
-            fill: false
-          }, { 
-            data: [40,70,100,160,240],
-            label: "213.10.189.76",
-            borderColor: "#e8c3b9",
-            fill: false
-          }, { 
-            data: [60,63,72,102,79],
-            label: "192.168.0.1",
-            borderColor: "#c45850",
-            fill: false
+            backgroundColor: 'rgba(178, 235, 244, 0.5)',
+            data: MIN,
+            label: "MIN",
+            borderColor: "#FF0011",
+            fill: '0'
           }
         ]
     };
@@ -103,6 +127,17 @@ function lineChart(){
         title: {
           display: true,
           text: '날짜별 각 IP 패킷 데이터 발생 수'
+        },
+        plugins: {
+            filler: {
+                propagate: true
+            }
+        },
+        legend: {
+            display: false
+        },
+        tooltips: {
+            enabled: false
         }
     };
 
