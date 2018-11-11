@@ -23,7 +23,7 @@
       </div>
     </div>
     <div class="mid">
-      <Network></Network>
+      <div id="netchart"></div>
       <div class="detect_result">
         <div class="detect_result_top">
           새로운 IP 출현
@@ -72,8 +72,8 @@
         <!--반복문으로 아래 뿌려주기-->
         <div class="bottom_item">
           <div class="bottom_info">
-            <div class="bottom_item_date">2018-09-24</div>
-            <div class="bottom_item_ip">192.168.1.6</div>
+            <div id="1_date" class="bottom_item_date">{{ lists }}</div>
+            <div id="1_ip" class="bottom_item_ip">{{ lists }}</div>
           </div>
           <div class="bottom_exception">
             <div>예외등록</div>
@@ -84,8 +84,8 @@
         </div>
         <div class="bottom_item">
           <div class="bottom_info">
-            <div class="bottom_item_date">2018-09-24</div>
-            <div class="bottom_item_ip">192.168.1.6</div>
+            <div id="2_date" class="bottom_item_date">{{ lists }}</div>
+            <div id="2_ip" class="bottom_item_ip">{{  }}</div>
           </div>
           <div class="bottom_exception">
             <div>예외등록</div>
@@ -96,8 +96,8 @@
         </div>
         <div class="bottom_item">
           <div class="bottom_info">
-            <div class="bottom_item_date">2018-09-24</div>
-            <div class="bottom_item_ip">192.168.1.6</div>
+            <div id="3_date" class="bottom_item_date"></div>
+            <div id="3_ip" class="bottom_item_ip">192.168.1.6</div>
           </div>
           <div class="bottom_exception">
             <div>예외등록</div>
@@ -107,8 +107,8 @@
           </div>
         </div>        <div class="bottom_item">
         <div class="bottom_info">
-          <div class="bottom_item_date">2018-09-24</div>
-          <div class="bottom_item_ip">192.168.1.6</div>
+          <div id="4_date" class="bottom_item_date">2018-09-24</div>
+          <div id="4_ip" class="bottom_item_ip">192.168.1.6</div>
         </div>
         <div class="bottom_exception">
           <div>예외등록</div>
@@ -119,8 +119,8 @@
       </div>
         <div class="bottom_item">
           <div class="bottom_info">
-            <div class="bottom_item_date">2018-09-24</div>
-            <div class="bottom_item_ip">192.168.1.6</div>
+            <div id="5_date" class="bottom_item_date">2018-09-24</div>
+            <div id="5_ip" class="bottom_item_ip">192.168.1.6</div>
           </div>
           <div class="bottom_exception">
             <div>예외등록</div>
@@ -136,11 +136,98 @@
 </template>
 
 <script>
-import Network from '../charts/Network'
+import axios from 'axios';
 export default {
   name: 'main',
-  components: {
-    Network: Network
+  data: {
+    lists: []
+  },
+  created() {
+    var ZoomChartsLicense = "ZCS-w7i48y6ej: ZoomCharts SDK Single Developer Licencefor lll..@..l.com (valid for development only); upgrades until: 2019-11-02";
+    var ZoomChartsLicenseKey = "75feb9f61556ab0ce137dadfc982bb16fc0697b607adafdb5e"+
+    "66670382aab509bc319b33b89aacf1a076eb8db1c113ccbd5803fc9141c80f927d7cc02ec5d47"+
+    "fb3d9a42993ac4e39e165c39212035bbecc1972770dcceb76be76e6fdafc7209fd99dfff0732c"+
+    "af02e7457a97768c24106acc0ad41604f14acf536676a700af6587b9e9c2770887b734f4aef07"+
+    "0cf7aea3304f79760c02b48c0ecf13231f192c5110d70824a85230c6643c7d1e6e27282f41af9"+
+    "12c5f47efce45435b7e6923aeaf5d104d87fd2414555d0f5a560cd42dc8ec864644ca35160d7d"+
+    "7c5103235d4228fcbcfeed6c4f38f7fc62601ab5be9905bcdc83e880bc17f7d920b159532a612";
+
+    let jquery = document.createElement('script')
+    jquery.setAttribute('src', 'https://code.jquery.com/jquery-3.2.1.min.js')
+    document.head.appendChild(jquery)
+
+    let zoomcharts = document.createElement('script')
+    zoomcharts.setAttribute('src', 'https://cdn.zoomcharts-cloud.com/1/latest/zoomcharts.js')
+    document.head.appendChild(zoomcharts)
+
+    let chartjs = document.createElement('script')
+    chartjs.setAttribute('src', 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js')
+    document.head.appendChild(chartjs)  
+
+    let plty = document.createElement('script')
+    plty.setAttribute('src', 'https://cdn.plot.ly/plotly-latest.min.js')
+    document.head.appendChild(plty)  
+  
+  },
+  mounted() {
+    axios.post("http://127.0.0.1:3000/data/lists", {account: 'test'})
+    .then(response => {
+      this.lists = response.data
+      this.$el.lists = lists
+    })
+    .catch(e => {console.log(e)})
+    /*
+    axios.post("http://127.0.0.1:3000/data/get2HopNet", {
+      body: '{account: test}'
+    })
+    .then(response => {console.log(response)})
+    .catch(e => {console.log(e)})
+    */
+    
+    function nodeStyle(node) {
+      node.label = node.data.id;
+      // 노드별 이미지 등록법
+      if(node.data.id == "192.168.0.1"){
+          node.image = "./data/image/web-cam.png";
+      }
+      if(node.data.name == "camera"){
+          node.fillColor = "rgba(0, 0, 200, 0.2)";
+      }
+      else{
+          node.fillColor = "rgba(0, 200, 0, 0.2)";
+      }
+    }
+
+    function linkStyle(link) {
+      link.fromDecoration = "circle";
+      link.toDecoration = "arrow";
+      link.fillColor = "#de672c";
+    }
+
+    let netNode = [{id: "1.1.1.1"}, {id: "2.2.2.2"}, {id: "114.114.114.114"}, {id: "213.10.189.76"}, {id: "192.168.0.1", name: "camera"}]
+    let packets = [
+      { id: "1", from: "1.1.1.1", to: "192.168.0.1" }, 
+      { id: "2", from: "2.2.2.2", to: "192.168.0.1" }, 
+      { id: "3", from: "114.114.114.114", to: "192.168.0.1" }, 
+      { id: "4", from: "213.10.189.76", to: "192.168.0.1" }, 
+      { id: "5", from: "192.168.0.1", to: "2.2.2.2" }
+    ] 
+
+    var nc = new NetChart({
+      container: document.getElementById("netchart"),
+      area: { height: 350 },
+      data: { // 경로 사용 가능 ex) xxx.csv or .json
+        preloaded: {
+          nodes: netNode,
+          links: packets
+        }
+      },
+      interaction: { selection: { lockNodesOnMove: true } },
+      style: {
+        nodeStyleFunction: nodeStyle,
+        linkStyleFunction: linkStyle
+      }
+   });
   }
 }
 </script>
@@ -319,4 +406,9 @@ export default {
     font-family: AppleSDGothicNeo;
     margin-left: 20px;
   }
+
+  #netchart {
+    width: 100%;
+  }
+
 </style>
