@@ -1,9 +1,10 @@
 <template>
   <div>
-    <div class="top">
+    <div class="top" v-if="rank >= 80">
       <div class="gage_chart">
-
+        {{ rank }}
       </div>
+
       <div class="summary">
         <div class="summary_grade">
           당신의 스마트 홈
@@ -17,6 +18,64 @@
         </div>
       </div>
     </div>
+    <div class="top" v-else-if="rank >= 60">
+
+      <div class="gage_chart">
+        {{ rank }}
+      </div>
+
+      <div class="summary"> 
+        <div class="summary_grade">
+          당신의 스마트 홈
+          <br>
+          보안 등급은 B 입니다.
+        </div>
+        <div class="summary_info">
+          현재 의심 사례가 발견되지만 대체적으로 안전한 상태입니다.
+          <br>
+          사전 메뉴얼을 참고하여 관리에 신경써주세요!
+        </div>
+      </div>
+    </div>
+    <div class="top" v-else-if="rank >= 30">
+
+      <div class="gage_chart">
+        {{ rank }}
+      </div>
+
+      <div class="summary">
+        <div class="summary_grade">
+          당신의 스마트 홈
+          <br>
+          보안 등급은 C 입니다.
+        </div>
+        <div class="summary_info">
+          현재 발견되는 위협이 많아 조치가 필요합니다.
+          <br>
+          사후 대체 메뉴얼을 참고하여 조치를 취해주세요!
+        </div>
+      </div>
+    </div>
+    <div class="top" v-else>
+
+      <div class="gage_chart">
+        {{ rank }}
+      </div>
+      
+      <div class="summary">
+        <div class="summary_grade">
+          당신의 스마트 홈
+          <br>
+          보안 등급은 D 입니다.
+        </div>
+        <div class="summary_info">
+          현재 위협이 심각한 상태입니다.
+          <br>
+          사전 사후 대처메뉴얼을 참고해서 조치를 반드시 취해야합니다!
+        </div>
+      </div>
+    </div>
+
     <div class="top_mid_margin">
       <div class="margin_text">
         스마트 홈 구성도
@@ -89,13 +148,13 @@
 
 <script>
 import axios from 'axios';
-let datas = []
 
 export default {
   name: 'main',
   data(){
     return {
-      lists: datas
+      lists: [],
+      rank: 0
     }
   },
   created: function() {
@@ -107,6 +166,12 @@ export default {
       this.lists   = response.data
     })
     .catch(e => {console.log(e)})
+
+    axios.post("http://127.0.0.1:3000/data/rank", {account: 'test'})
+    .then(response => {
+     this.rank = response.data[0]["rank"]
+    })
+    .catch(err => console.log(err))
 
     let nodes = []
     let edges = []
@@ -165,7 +230,6 @@ export default {
         });
     })
     .catch(e => {console.log(e)})
-    
     
   }
 }

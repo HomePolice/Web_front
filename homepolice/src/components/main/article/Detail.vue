@@ -8,140 +8,176 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'detail',
-  mounted() {
-    try{
-      function barChart(){
-        var trace1 = {
-          y: [0.75, 5.25, 5.5, 6, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93, 9.2, 9.5, 10, 10.25, 11.5, 12, 16, 20.90, 22.3, 23.25],
-          type: 'box',
-          name: '213.17.0.45',
-          marker: {
-            color: 'rgb(8,81,156)',
-            outliercolor: 'rgba(219, 64, 82, 0.6)',
-            line: {
-              outliercolor: 'rgba(219, 64, 82, 1.0)',
-              outlierwidth: 2
-            }
-          },
-          boxpoints: 'suspectedoutliers'
-        };
+  data(){
+    return {
+    }
+  },
+  mounted: function() {
+    let counts = [], MAX = [], MIN = [], lineLabel = [];
 
-        var trace2 = {
-          y: [0.75, 5.25, 5.5, 6, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93, 9.2, 9.5, 10, 10.25, 11.5, 12, 16, 20.90, 22.3, 23.25],
-          type: 'box',
-          name: '114.114.114.114',
-          marker: {
-            color: 'rgb(8,81,156)',
-            outliercolor: 'rgba(219, 64, 82, 0.6)',
-            line: {
-              outliercolor: 'rgba(219, 64, 82, 1.0)',
-              outlierwidth: 2
-            }
-          },
-          boxpoints: 'suspectedoutliers'
-        };
-          
-        var trace3 = {
-          y: [0.75, 5.25, 5.5, 6, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93, 9.2, 9.5, 10, 10.25, 11.5, 12, 16, 20.90, 22.3, 23.25],
-          type: 'box',
-          name: '2.2.2.2',
-          marker: {
-            color: 'rgb(8,81,156)',
-            outliercolor: 'rgba(219, 64, 82, 0.6)',
-            line: {
-              outliercolor: 'rgba(219, 64, 82, 1.0)',
-              outlierwidth: 2
-            }
-          },
-          boxpoints: 'suspectedoutliers'
-        };
-          
-        var trace4 = {
-          y: [0.75, 5.25, 5.5, 6, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93, 9.2, 9.5, 10, 10.25, 11.5, 12, 16, 20.90, 22.3, 23.25],
-          type: 'box',
-          name: '1.1.1.1',
-          marker: {
-            color: 'rgb(8,81,156)',
-            outliercolor: 'rgba(219, 64, 82, 0.6)',
-            line: {
-              outliercolor: 'rgba(219, 64, 82, 1.0)',
-              outlierwidth: 2
-            }
-          },
-          boxpoints: 'suspectedoutliers'
-        };
-        
-        var data = [trace1, trace2, trace3, trace4];
-          
-        var layout = {
-          title: 'Box Plot Styling Outliers'
-        };
-          
-        Plotly.newPlot('popChart', data, layout);
-      }
+    function lineChart(){
+      var lineCanvas = $("#lineChart");
 
-      function lineChart(){
-        var lineCanvas = $("#lineChart");
-
-        let counts = [282,350,411,502,635];
-        let MIN = [], MAX = [];
-        for(let i = 0; i < counts.length; i++){
-          MIN.push(counts[i] * 0.8);
-          MAX.push(counts[i] * 1.2);
-        }
-        MAX[3] = MAX[3] - 100;
-        MAX[4] = MAX[3];
-        MIN[4] = MIN[4] - 200;
-
-        var lineData = {
-          labels: ["10/29","10/30","10/31","11/1","11/2"],
-          datasets: [{ 
-              backgroundColor: 'rgba(241, 95, 95, 0.5)',
-              data: MAX,
-              label: "MAX",
-              borderColor: "#FF0011",
-              fill: 'end'
-            }, {
-              data: counts,
-              label: "2.2.2.2",
-              borderColor: "#22AA22",
-              fill: false
-            }, { 
-              backgroundColor: 'rgba(178, 235, 244, 0.5)',
-              data: MIN,
-              label: "MIN",
-              borderColor: "#FF0011",
-              fill: '0'
-            }
-          ]
-        };
-
-        var linechartOptions = {
-          title: {
-            display: true,
-            text: '날짜별 각 IP 패킷 데이터 발생 수'
-          },
-          plugins: {
-            filler: {
-              propagate: true
-            }
-          },
-          legend: {
-            display: false
-          },
-          tooltips: {
-            enabled: false
+      var lineData = {
+        labels: lineLabel,
+        datasets: [{ 
+            backgroundColor: 'rgba(241, 95, 95, 0.5)',
+            data: MAX,
+            label: "MAX",
+            borderColor: "#FF0011",
+            fill: 'end'
+          }, {
+            data: counts,
+            label: "2.2.2.2",
+            borderColor: "#22AA22",
+            fill: false
+          }, { 
+            backgroundColor: 'rgba(178, 235, 244, 0.5)',
+            data: MIN,
+            label: "MIN",
+            borderColor: "#FF0011",
+            fill: '0'
           }
-        };
+        ]
+      };
 
-        var linechart = new Chart(lineCanvas, {
-          type: 'line',
-          data:lineData,
-          options: linechartOptions
-        });
+      var linechartOptions = {
+        title: {
+          display: true,
+          text: '날짜별 각 IP 패킷 데이터 발생 수'
+        },
+        plugins: {
+          filler: {
+            propagate: true
+          }
+        },
+        legend: {
+          display: false
+        },
+        tooltips: {
+          enabled: false
+        }
+      };
+
+      var linechart = new Chart(lineCanvas, {
+        type: 'line',
+        data:lineData,
+        options: linechartOptions
+      });
+    }
+
+    axios.post("http://127.0.0.1:3000/data/getThreshold", {account: 'test'})
+    .then(response => {
+      MAX = JSON.parse(response.data[0]["max"])
+      counts = JSON.parse(response.data[0]["origin"])
+      MIN = JSON.parse(response.data[0]["min"])
+
+      let d = new Date();
+      let m = d.getMinutes();
+      let h = d.getHours();
+      let interval = 20 / counts.length;
+      for(let i = counts.length - 1; i >= 0; i--){
+        let cm = Math.floor((m - (interval * i)));
+        if(cm < 0){
+          cm = cm + 60;
+
+          lineLabel.push((h - 1) + ":" + cm);
+        }
+        else{
+          lineLabel.push(h + ":" + cm);
+        }
       }
+
+      lineChart();
+    })
+    .catch(e => {console.log(e)})
+
+    function barChart(){
+      var trace1 = {
+        y: [0.75, 5.25, 5.5, 6, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93, 9.2, 9.5, 10, 10.25, 11.5, 12, 16, 20.90, 22.3, 23.25],
+        type: 'box',
+        name: '213.17.0.45',
+        marker: {
+          color: 'rgb(8,81,156)',
+          outliercolor: 'rgba(219, 64, 82, 0.6)',
+          line: {
+            outliercolor: 'rgba(219, 64, 82, 1.0)',
+            outlierwidth: 2
+          }
+        },
+        boxpoints: 'suspectedoutliers'
+      };
+
+      var trace2 = {
+        y: [0.75, 5.25, 5.5, 6, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93, 9.2, 9.5, 10, 10.25, 11.5, 12, 16, 20.90, 22.3, 23.25],
+        type: 'box',
+        name: '114.114.114.114',
+        marker: {
+          color: 'rgb(8,81,156)',
+          outliercolor: 'rgba(219, 64, 82, 0.6)',
+          line: {
+            outliercolor: 'rgba(219, 64, 82, 1.0)',
+            outlierwidth: 2
+          }
+        },
+        boxpoints: 'suspectedoutliers'
+      };
+          
+      var trace3 = {
+        y: [0.75, 5.25, 5.5, 6, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93, 9.2, 9.5, 10, 10.25, 11.5, 12, 16, 20.90, 22.3, 23.25],
+        type: 'box',
+        name: '2.2.2.2',
+        marker: {
+          color: 'rgb(8,81,156)',
+          outliercolor: 'rgba(219, 64, 82, 0.6)',
+          line: {
+            outliercolor: 'rgba(219, 64, 82, 1.0)',
+            outlierwidth: 2
+          }
+        },
+        boxpoints: 'suspectedoutliers'
+      };
+          
+      var trace4 = {
+        y: [0.75, 5.25, 5.5, 6, 6.2, 6.6, 6.80, 7.0, 7.2, 7.5, 7.5, 7.75, 8.15, 8.15, 8.65, 8.93, 9.2, 9.5, 10, 10.25, 11.5, 12, 16, 20.90, 22.3, 23.25],
+        type: 'box',
+        name: '1.1.1.1',
+        marker: {
+          color: 'rgb(8,81,156)',
+          outliercolor: 'rgba(219, 64, 82, 0.6)',
+          line: {
+            outliercolor: 'rgba(219, 64, 82, 1.0)',
+            outlierwidth: 2
+          }
+        },
+        boxpoints: 'suspectedoutliers'
+      };
+        
+      var data = [trace1, trace2, trace3, trace4];
+          
+      var layout = {
+        title: 'Box Plot Styling Outliers'
+      };
+          
+      Plotly.newPlot('popChart', data, layout);
+    }
+
+    var most5 = []
+
+    axios.post("http://127.0.0.1:3000/data/getMost5", {account: 'test'})
+    .then(response => {
+      console.log(response.data.ip);
+      console.log(response.data.val);
+      barChart();
+    })
+    .catch(error => console.log(error))
+
+    try{
+      
 
       // This is zoomchart part, not working
       function geoChart(){
@@ -213,8 +249,7 @@ export default {
         };
         chart = new GeoChart(options);
       }
-      barChart();
-      lineChart();
+      
       geoChart();
       }
     catch(e){
