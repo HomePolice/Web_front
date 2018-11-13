@@ -255,11 +255,11 @@ export default {
           initialLat: 37.566536,
           initialLng: 126.977966,
           initialZoom: 4,
-          minZoom: 1
+          minZoom: 2
         },  // 더블클릭 불가능 지정
         advanced: { pointer: { noClickOnDoubleClick: false } }
       };
-      let chart = new GeoChart(options);
+      var chart = new GeoChart(options);
     }
 
     axios.post("http://127.0.0.1:3000/data/geo", {account: 'test'})
@@ -267,12 +267,20 @@ export default {
       let get = response.data
 
       for(let i = 0; i < get.length; i++){
-        location.push({"id": get[i]["nation"], "coordinates": [126.977966, 37.566536 - (100 * i)]})
-        packetCount.push({"from": "korea", "to": get[i]["nation"], "traffic": get[i]["abnormal_count"]})
+        axios.get("http://www.mapquestapi.com/geocoding/v1/address?key=0VVYrAu2CsGcrHAfmBk4Qs2JGmErZ2dd&location=" + get[i]["nation"])
+        .then(response =>{
+          let coordinate = response.data.results[0]["locations"][0]["latLng"]
+          location.push({"id": get[i]["nation"], "coordinates": [coordinate["lng"], coordinate["lat"]]})
+          packetCount.push({"from": "south korea", "to": get[i]["nation"], "traffic": get[i]["abnormal_count"]})
+
+          if(i == get.length - 1){
+            console.log(location)
+            console.log(packetCount)
+            geoChart()
+          }
+        })
+        .catch(err => console.log(err))
       }
-      console.log(location)
-      console.log(packetCount)
-      geoChart();
     })
     .catch(err => console.log(err))
   }
