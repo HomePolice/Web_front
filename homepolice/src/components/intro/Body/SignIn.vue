@@ -18,17 +18,17 @@
       </div>
     </div>
 
-    <form class="form">
+    <div class="form">
       <div>
-        <input type="text" id="id" name="id" placeholder="아이디">
+        <input type="text" id="account" name="account" placeholder="아이디">
       </div>
       <div>
-        <input type="text" id="pw" name="pw" placeholder="비밀번호">
+        <input type="text" id="password" name="password" placeholder="비밀번호">
       </div>
       <div>
-        <input type="submit" value="로그인하기">
+        <button value="로그인" v-on:click="validate">로그인</button>
       </div>
-    </form>
+    </div>
 
     <div class="bottom">
       아직 홈폴리스 회원이 아니신가요?
@@ -38,8 +38,31 @@
 </template>
 
 <script>
+import axios from 'axios';
+import localforage from 'localforage';
+
 export default {
-  name: 'sign-in'
+  name: 'sign-in',
+  methods: {
+    validate: function (event){
+      let id = document.getElementById("account").value
+      let pw = document.getElementById("password").value
+      axios.post("http://127.0.0.1:3000/users/validation", {account: id, password: pw})
+      .then(response => {
+        if(response.data["success"]){
+          localforage.setItem('account', id).then((value) => {
+          console.log('we saved ' + value);
+          }).catch((err) => {
+            console.log(err);
+          });
+          this.$router.push('/main')
+        }
+        else{
+          alert('아이디와 비밀번호를 확인해주세요!')
+        }
+      })
+    }
+  }
 }
 </script>
 
@@ -90,7 +113,7 @@ export default {
     box-sizing: border-box;
   }
 
-  input[type=submit] {
+  button[value="로그인"] {
     width: 40%;
     padding: 12px 20px;
     margin: 20px 0;

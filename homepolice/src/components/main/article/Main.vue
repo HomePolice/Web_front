@@ -92,11 +92,11 @@
            ../../../assets/graphic-ip-search_2018-11-06/graphic-ip-search@3x.png 3x"
              class="Graphic_IPSearch">
         <div class="detect_result_mid">
-          미국 뉴옥시
+          {{lNT}}
           <br>
-          192.168.10.2
+          {{lIP}}
         </div>
-        <button>차단하기</button>
+        <button v-on:click='registerDrop'>차단하기</button>
       </div>
     </div>
     <div class="mid_bottom_margin">
@@ -136,9 +136,9 @@
               <div class="bottom_item_ip">{{list["dest_ip"]}}</div>
             </div>
             <div class="bottom_exception">
-              <div>예외등록</div>
+              <div v-on:click='registerExcept'>예외등록</div>
             </div>
-            <div class="bottom_button">차단</div>
+            <div class="bottom_button" v-on:click='registerDrop'>차단</div>
           </div>
         </div>
       </div>
@@ -148,89 +148,111 @@
 
 <script>
 import axios from 'axios';
+import localforage from 'localforage';
 
 export default {
   name: 'main',
   data(){
     return {
       lists: [],
-      rank: 0
+      rank: 0,
+      lIP: "",
+      lNT: "",
+    }
+  },
+  methods: {
+    registerExcept: function(event) {
+      // 예외등록 차단등록 리스트 중 하나 특정할 수 있으면 바로 구현 가능
+      alert("예외 등록되었습니다.")
+    },
+    registerDrop: function(event) {
+      alert("차단 등록되었습니다.")
     }
   },
   created: function() {
-
+    
   },
   mounted() {
-    axios.post("http://127.0.0.1:3000/data/lists", {account: 'test'})
-    .then(response => {
-      this.lists   = response.data
-    })
-    .catch(e => {console.log(e)})
+    localforage.getItem('account').then((cookie) => {
+      axios.post("http://127.0.0.1:3000/data/lists", {account: cookie})
+      .then(response => {
+        this.lists   = response.data
+      })
+      .catch(e => {console.log(e)})
 
-    axios.post("http://127.0.0.1:3000/data/rank", {account: 'test'})
-    .then(response => {
-     this.rank = response.data[0]["rank"]
-    })
-    .catch(err => console.log(err))
+      axios.post("http://127.0.0.1:3000/data/getLatestIp", {account: cookie})
+      .then(response => {
+        this.lIP = response.data[0]["dest_ip"]
+        this.lNT = response.data[0]["nation"]
+      })
+      .catch(e => {console.log(e)})
 
-    let nodes = []
-    let edges = []
+      axios.post("http://127.0.0.1:3000/data/rank", {account: cookie})
+      .then(response => {
+      this.rank = response.data[0]["rank"]
+      })
+      .catch(err => console.log(err))
 
-    axios.post("http://127.0.0.1:3000/data/get2HopNet", {account: 'test'})
-    .then(response => {
-      let ids = 1;
-      let t_edges = response.data.edge
-      for(let i = 0; i < t_edges.length; i++){
-        for(let j = 0; j < t_edges[i].length; j++){
-          if(t_edges[i][j]["properties"]["sourceIp"] === "10.0.0.95"){
-            nodes.push({"id": t_edges[i][j]["properties"]["sourceIp"], "name": "camera"})
-          }
-          else{
-            nodes.push({"id": t_edges[i][j]["properties"]["sourceIp"]})
-          }
-          edges.push({"id": ids, "from": t_edges[i][j]["properties"]["sourceIp"], "to": t_edges[i][j]["properties"]["destIp"]})
-          ids += 1
-        }
-      }
-      nodes = Object.values(nodes.reduce((acc,cur)=>Object.assign(acc,{[cur.id]:cur}),{}))
-        
-      function nodeStyle(node) {
-            node.label = node.data.id;
-            // 노드별 이미지 등록법
-            if(node.data.name == "camera"){
-                node.fillColor = "rgba(0, 0, 200, 0.2)";
-                node.image = "../charts/data/image/web-cam.png";
+      let nodes = []
+      let edges = []
+
+      axios.post("http://127.0.0.1:3000/data/get2HopNet", {account: cookie})
+      .then(response => {
+        let ids = 1;
+        let t_edges = response.data.edge
+        for(let i = 0; i < t_edges.length; i++){
+          for(let j = 0; j < t_edges[i].length; j++){
+            if(t_edges[i][j]["properties"]["sourceIp"] === "10.0.0.95"){
+              nodes.push({"id": t_edges[i][j]["properties"]["sourceIp"], "name": "camera"})
             }
             else{
-                node.fillColor = "rgba(0, 200, 0, 0.2)";
+              nodes.push({"id": t_edges[i][j]["properties"]["sourceIp"]})
             }
+            edges.push({"id": ids, "from": t_edges[i][j]["properties"]["sourceIp"], "to": t_edges[i][j]["properties"]["destIp"]})
+            ids += 1
           }
-
-          function linkStyle(link) {
-            link.fromDecoration = "circle";
-            link.toDecoration = "arrow";
-            link.fillColor = "#de672c";
-          }
-
-
-          var nc = new NetChart({
-            container: document.getElementById("netchart"),
-            area: { height: 350 },
-            data: { // 경로 사용 가능 ex) xxx.csv or .json
-              preloaded: {
-                nodes: nodes,
-                links: edges
+        }
+        nodes = Object.values(nodes.reduce((acc,cur)=>Object.assign(acc,{[cur.id]:cur}),{}))
+          
+        function nodeStyle(node) {
+              node.label = node.data.id;
+              // 노드별 이미지 등록법
+              if(node.data.name == "camera"){
+                  node.fillColor = "rgba(0, 0, 200, 0.2)";
+                  node.image = "../charts/data/image/web-cam.png";
               }
-            },
-            interaction: { selection: { lockNodesOnMove: true } },
-            style: {
-              nodeStyleFunction: nodeStyle,
-              linkStyleFunction: linkStyle
+              else{
+                  node.fillColor = "rgba(0, 200, 0, 0.2)";
+              }
             }
-        });
-    })
-    .catch(e => {console.log(e)})
-    
+
+            function linkStyle(link) {
+              link.fromDecoration = "circle";
+              link.toDecoration = "arrow";
+              link.fillColor = "#de672c";
+            }
+
+
+            var nc = new NetChart({
+              container: document.getElementById("netchart"),
+              area: { height: 350 },
+              data: { // 경로 사용 가능 ex) xxx.csv or .json
+                preloaded: {
+                  nodes: nodes,
+                  links: edges
+                }
+              },
+              interaction: { selection: { lockNodesOnMove: true } },
+              style: {
+                nodeStyleFunction: nodeStyle,
+                linkStyleFunction: linkStyle
+              }
+          });
+      })
+      .catch(e => {console.log(e)})
+    }).catch((err) => {
+      console.log(err);
+    });
   }
 }
 </script>
