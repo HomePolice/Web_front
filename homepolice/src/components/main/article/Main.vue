@@ -195,6 +195,7 @@ export default {
 
       let nodes = []
       let edges = []
+      let nation = []
 
       axios.post("http://127.0.0.1:3000/data/get2HopNet", {account: cookie})
       .then(response => {
@@ -202,52 +203,82 @@ export default {
         let t_edges = response.data.edge
         for(let i = 0; i < t_edges.length; i++){
           for(let j = 0; j < t_edges[i].length; j++){
-            if(t_edges[i][j]["properties"]["sourceIp"] === "10.0.0.95"){
-              nodes.push({"id": t_edges[i][j]["properties"]["sourceIp"], "name": "camera"})
-            }
-            else{
-              nodes.push({"id": t_edges[i][j]["properties"]["sourceIp"]})
-            }
-            edges.push({"id": ids, "from": t_edges[i][j]["properties"]["sourceIp"], "to": t_edges[i][j]["properties"]["destIp"]})
-            ids += 1
-          }
-        }
-        nodes = Object.values(nodes.reduce((acc,cur)=>Object.assign(acc,{[cur.id]:cur}),{}))
-          
-        function nodeStyle(node) {
-              node.label = node.data.id;
-              // 노드별 이미지 등록법
-              if(node.data.name == "camera"){
-                  node.fillColor = "rgba(0, 0, 200, 0.2)";
-                  node.image = "../charts/data/image/web-cam.png";
+            axios.post("http://api.ipstack.com/" + t_edges[i][j]["properties"]["destIp"] + "?access_key=7fc9c7cb577799e568e7da72bbdc3fbf")
+            .then(response => {
+              if(response.data.country_name == null){
+                t_edges[i][j]["properties"]["nation"] = "south korea"
               }
               else{
-                  node.fillColor = "rgba(0, 200, 0, 0.2)";
+                t_edges[i][j]["properties"]["nation"] = response.data.country_name
               }
-            }
-
-            function linkStyle(link) {
-              link.fromDecoration = "circle";
-              link.toDecoration = "arrow";
-              link.fillColor = "#de672c";
-            }
-
-
-            var nc = new NetChart({
-              container: document.getElementById("netchart"),
-              area: { height: 350 },
-              data: { // 경로 사용 가능 ex) xxx.csv or .json
-                preloaded: {
-                  nodes: nodes,
-                  links: edges
+              nation.push(t_edges[i][j]["properties"]["nation"])
+              nodes.push({"id": t_edges[i][j]["properties"]["nation"]})
+              
+              if(i == t_edges.length -1 && j == t_edges[i].length -1){
+                for(let i = 0; i < t_edges.length; i++){
+                  for(let j = 0; j < t_edges[i].length; j++){
+                    if(t_edges[i][j]["properties"]["sourceIp"] === "10.0.0.95"){
+                      nodes.push({"id": t_edges[i][j]["properties"]["sourceIp"], "name": "camera"})
+                    }
+                    else{
+                      nodes.push({"id": t_edges[i][j]["properties"]["sourceIp"]})
+                    }
+                    edges.push({"id": ids, "from": "10.0.0.95", "to": t_edges[i][j]["properties"]["nation"]})
+                    ids += 1
+                    edges.push({"id": ids, "from": t_edges[i][j]["properties"]["nation"], "to": t_edges[i][j]["properties"]["destIp"]})
+                    ids += 1
+                  }
                 }
-              },
-              interaction: { selection: { lockNodesOnMove: true } },
-              style: {
-                nodeStyleFunction: nodeStyle,
-                linkStyleFunction: linkStyle
+                nation = nation.reduce(function(a,b){if(a.indexOf(b)<0)a.push(b);return a;},[]);
+                for(let i = 0; i < nation.length; i++){
+                  nodes.push({"id": nation[i], "name": "nation"})
+                }
+
+                nodes = Object.values(nodes.reduce((acc,cur)=>Object.assign(acc,{[cur.id]:cur}),{}))
+                  
+                function nodeStyle(node) {
+                  node.label = node.data.id;
+                  // 노드별 이미지 등록법
+                  if(node.data.name == "camera"){
+                      node.fillColor = "rgba(0, 0, 200, 0.2)";
+                      node.image = "../../../assets/image/web-cam.png";
+                  }
+                  else if(node.data.name == "nation"){
+                    node.fillColor = "rgba(200, 0, 0, 0.2)";
+                  }
+                  else{
+                      node.fillColor = "rgba(0, 200, 0, 0.2)";
+                  }
+                }
+
+                function linkStyle(link) {
+                  link.fromDecoration = "circle";
+                  link.toDecoration = "arrow";
+                  link.fillColor = "#de672c";
+                }
+
+
+                var nc = new NetChart({
+                  container: document.getElementById("netchart"),
+                  area: { height: 350 },
+                  data: { // 경로 사용 가능 ex) xxx.csv or .json
+                    preloaded: {
+                      nodes: nodes,
+                      links: edges
+                    }
+                  },
+                  interaction: { selection: { lockNodesOnMove: true } },
+                  style: {
+                    nodeStyleFunction: nodeStyle,
+                    linkStyleFunction: linkStyle
+                  }
+                });
               }
-          });
+            })
+          }
+        }
+
+        
       })
       .catch(e => {console.log(e)})
     }).catch((err) => {

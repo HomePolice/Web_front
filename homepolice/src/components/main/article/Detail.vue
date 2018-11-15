@@ -305,4 +305,8 @@ export default {
   border-style: outset;
 }
 
+#DVSL-interaction {
+  
+}
+
 </style>
