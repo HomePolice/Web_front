@@ -15,7 +15,32 @@ export default {
   name: 'detail',
   data(){
     return {
+      lIP: "",
+      timer: ""
     }
+  },
+  methods: {
+    fetchEventsList: function() {
+      localforage.getItem('account').then((cookie) => {
+        axios.post("http://127.0.0.1:3000/data/getLatestIp", {account: cookie})
+        .then(response => {
+          if(response.data[0]["dest_ip"] === this.lIP || this.lIP.length <= 0){
+            console.log("same")
+            this.lIP = response.data[0]["dest_ip"]
+          }
+          else{
+            console.log("달라요")
+            this.lIP = response.data[0]["dest_ip"]
+          }
+        })
+        .catch(e => {console.log(e)})
+      })
+    },
+    cancelAutoUpdate: function() { clearInterval(this.timer) }
+  },
+  created: function() {
+    this.fetchEventsList();
+    this.timer = setInterval(this.fetchEventsList, 5000)
   },
   mounted: function() {
     localforage.getItem('account').then((cookie) => {

@@ -149,6 +149,7 @@
 <script>
 import axios from 'axios';
 import localforage from 'localforage';
+import Message from 'vue-m-message'
 
 export default {
   name: 'main',
@@ -158,6 +159,7 @@ export default {
       rank: 0,
       lIP: "",
       lNT: "",
+      timer: ''
     }
   },
   methods: {
@@ -167,10 +169,29 @@ export default {
     },
     registerDrop: function(event) {
       alert("차단 등록되었습니다.")
-    }
+    },
+    fetchEventsList: function() {
+      localforage.getItem('account').then((cookie) => {
+        axios.post("http://127.0.0.1:3000/data/getLatestIp", {account: cookie})
+        .then(response => {
+          if(response.data[0]["dest_ip"] === this.lIP || this.lIP.length <= 0){
+            this.lIP = response.data[0]["dest_ip"]
+            this.lNT = response.data[0]["nation"]
+          }
+          else{
+            Message.error("새로운 아이피 출연!") 
+            this.lIP = response.data[0]["dest_ip"]
+            this.lNT = response.data[0]["nation"]
+          }
+        })
+        .catch(e => {console.log(e)})
+      })
+    },
+    cancelAutoUpdate: function() { clearInterval(this.timer) }
   },
   created: function() {
-    
+    this.fetchEventsList();
+    this.timer = setInterval(this.fetchEventsList, 5000)
   },
   mounted() {
     localforage.getItem('account').then((cookie) => {
@@ -284,6 +305,9 @@ export default {
     }).catch((err) => {
       console.log(err);
     });
+  },
+  beforeDestroy() {
+    clearInterval(this.timer)
   }
 }
 </script>
