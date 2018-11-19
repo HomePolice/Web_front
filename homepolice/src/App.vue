@@ -8,6 +8,7 @@
 </template>
 
 <script>
+// 최상위 컴포넌트 템플릿
 import Footer from './components/Footer'
 
 export default {

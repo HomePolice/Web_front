@@ -8,6 +8,8 @@
 </template>
 
 <script>
+// 컴포넌트
+// 상단부
 export default {
   name: 'header'
 }

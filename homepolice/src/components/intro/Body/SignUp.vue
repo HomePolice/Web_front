@@ -32,7 +32,7 @@
         <input type="text" id="device_id" name="device_id" placeholder="디바이스 번호">
       </div>
       <div>
-        <input type="submit" value="가입하기">
+        <button value="로그인" v-on:click="validate"> 가입하기 </button>
       </div>
     </form>
   </div>
@@ -40,7 +40,25 @@
 
 <script>
 export default {
-  name: 'sign-up'
+  name: 'sign-up',
+  methods: {
+    // 회원가입 처리
+    validate: function (event){
+      let id = document.getElementById("id").value
+      let pw = document.getElementById("pw").value
+      axios.post("http://127.0.0.1:3000/users/", {account: id, password: pw})
+      .then(response => {
+        if(response.data["success"]){
+          console.log(response.data)
+          this.$router.push('/signin')
+        }
+        else{
+          alert('죄송합니다! 오류가 발생했습니다')
+          this.$router.push('/signup')
+        }
+      })
+    }
+  }
 }
 </script>
 
@@ -90,7 +108,7 @@ export default {
     box-sizing: border-box;
   }
 
-  input[type=submit] {
+  button[value="로그인"] {
     width: 40%;
     padding: 12px 20px;
     margin: 20px 0;

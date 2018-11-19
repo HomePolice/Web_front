@@ -15,6 +15,9 @@
 </template>
 
 <script>
+// 컴포넌트
+// 메인페이지의 상위 parent
+
 import Nav from '../../components/main/Nav'
 import Header from '../../components/main/Header'
 

@@ -28,6 +28,8 @@
 </template>
 
 <script>
+// 컴포넌트
+// 하단부
 export default {
   name: 'nav'
 }
