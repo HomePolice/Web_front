@@ -2,7 +2,7 @@
   <div>
     <div class="top" v-if="rank >= 80">
       <div class="gage_chart">
-        {{ rank }}
+        <img src="../../../assets/image/80.png" class="rank_img"/>
       </div>
 
       <div class="summary">
@@ -21,7 +21,7 @@
     <div class="top" v-else-if="rank >= 60">
 
       <div class="gage_chart">
-        {{ rank }}
+        <img src="../../../assets/image/60.png" class="rank_img"/>
       </div>
 
       <div class="summary"> 
@@ -37,10 +37,10 @@
         </div>
       </div>
     </div>
-    <div class="top" v-else-if="rank >= 30">
+    <div class="top" v-else-if="rank >= 40">
 
       <div class="gage_chart">
-        {{ rank }}
+        <img src="../../../assets/image/40.png" class="rank_img"/>
       </div>
 
       <div class="summary">
@@ -59,7 +59,7 @@
     <div class="top" v-else>
 
       <div class="gage_chart">
-        {{ rank }}
+        <img src="../../../assets/image/20.png" class="rank_img"/>
       </div>
       
       <div class="summary">
@@ -320,7 +320,8 @@ export default {
 
   .gage_chart {
     width: 37%;
-    background-color: dodgerblue;
+    // background-color: dodgerblue;
+    text-align: center;
   }
 
   .summary {
@@ -485,6 +486,11 @@ export default {
     font-size: 20px;
     font-family: AppleSDGothicNeo;
     margin-left: 20px;
+  }
+
+  .rank_img {
+    width: 100%;
+    height:100%;
   }
 
   #netchart {
