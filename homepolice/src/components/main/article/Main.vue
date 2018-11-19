@@ -147,6 +147,8 @@
 </template>
 
 <script>
+// 메인 페이지 컴포넌트
+
 import axios from 'axios';
 import localforage from 'localforage';
 import Message from 'vue-m-message'

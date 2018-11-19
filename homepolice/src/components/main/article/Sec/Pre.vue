@@ -75,6 +75,7 @@
 </template>
 
 <script>
+//사전 사후 메뉴얼 페이지 컴포넌트
 export default {
   name: 'pre'
 }

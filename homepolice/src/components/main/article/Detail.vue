@@ -16,6 +16,7 @@
 </template>
 
 <script>
+// 상세 차트 보기 페이지 컴포넌트
 import axios from 'axios'
 import localforage from 'localforage'
 
