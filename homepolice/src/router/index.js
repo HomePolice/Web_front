@@ -6,6 +6,8 @@ import App from '../components/main/App'
 import Main from '../components/main/article/Main'
 import Detail from '../components/main/article/Detail'
 import Board from '../components/main/article/Board'
+import Pre from '../components/main/article/Sec/Pre'
+import Post from '../components/main/article/Sec/Post'
 
 Vue.use(Router)
 
@@ -34,22 +36,37 @@ export default new Router({
       },
       children: [
         {
-          path: 'main',
+          path: '/main',
           components: {
             Article: Main
           }
         },
         {
-          path: 'detail',
+          path: '/detail',
           components: {
             Article: Detail
           }
         },
         {
-          path: 'board',
+          path: '/board',
+          redirect: '/board/pre',
           components: {
             Article: Board
-          }
+          },
+          children: [
+            {
+              path: 'pre',
+              components: {
+                Sec: Pre
+              }
+            },
+            {
+              path: 'post',
+              components: {
+                Sec: Post
+              }
+            }
+          ]
         }
       ]
     }

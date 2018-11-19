@@ -1,6 +1,14 @@
 <template>
-  <div>
-    <h1>상세 페이지</h1>
+  <div class="container">
+    <div class="top">
+      <img src="../../../../src/assets/ic-manual-24-px_2018-11-11/ic-manual-24-px.png"
+           srcset="../../../../src/assets/ic-manual-24-px_2018-11-11/ic-manual-24-px@2x.png 2x,
+             ../../../../src/assets/ic-manual-24-px_2018-11-11/ic-manual-24-px@3x.png 3x"
+           class="ic_Manual_24px">
+      <div class="manual">
+        상세보기
+      </div>
+    </div>
       <span class="slide"><div id="popChart"></div></span>
       <span class="slide"><canvas id="lineChart"></canvas></span>
       <span class="slide"><div id="geoChart"></div></span>
@@ -8,69 +16,44 @@
 </template>
 
 <script>
-import axios from 'axios';
-import localforage from 'localforage';
+import axios from 'axios'
+import localforage from 'localforage'
 
 export default {
   name: 'detail',
-  data(){
+  data () {
     return {
-      lIP: "",
-      timer: ""
     }
   },
-  methods: {
-    fetchEventsList: function() {
-      localforage.getItem('account').then((cookie) => {
-        axios.post("http://127.0.0.1:3000/data/getLatestIp", {account: cookie})
-        .then(response => {
-          if(response.data[0]["dest_ip"] === this.lIP || this.lIP.length <= 0){
-            console.log("same")
-            this.lIP = response.data[0]["dest_ip"]
-          }
-          else{
-            console.log("달라요")
-            this.lIP = response.data[0]["dest_ip"]
-          }
-        })
-        .catch(e => {console.log(e)})
-      })
-    },
-    cancelAutoUpdate: function() { clearInterval(this.timer) }
-  },
-  created: function() {
-    this.fetchEventsList();
-    this.timer = setInterval(this.fetchEventsList, 5000)
-  },
-  mounted: function() {
+  mounted: function () {
     localforage.getItem('account').then((cookie) => {
-      let counts = [], MAX = [], MIN = [], lineLabel = [];
+      let counts = [], MAX = [], MIN = [], lineLabel = []
 
-      function lineChart(){
-        var lineCanvas = $("#lineChart");
+      function lineChart () {
+        var lineCanvas = $('#lineChart')
 
         var lineData = {
           labels: lineLabel,
-          datasets: [{ 
-              backgroundColor: 'rgba(178, 235, 244, 0.5)',
-              data: MAX,
-              label: "MAX",
-              borderColor: "#FF0011",
-              fill: 'end'
-            }, {
-              data: counts,
-              label: "2.2.2.2",
-              borderColor: "#22AA22",
-              fill: false
-            }, { 
-              backgroundColor: 'rgba(178, 235, 244, 0.5)',
-              data: MIN,
-              label: "MIN",
-              borderColor: "#FF0011",
-              fill: 'start'
-            }
+          datasets: [{
+            backgroundColor: 'rgba(178, 235, 244, 0.5)',
+            data: MAX,
+            label: 'MAX',
+            borderColor: '#FF0011',
+            fill: 'end'
+          }, {
+            data: counts,
+            label: '2.2.2.2',
+            borderColor: '#22AA22',
+            fill: false
+          }, {
+            backgroundColor: 'rgba(178, 235, 244, 0.5)',
+            data: MIN,
+            label: 'MIN',
+            borderColor: '#FF0011',
+            fill: 'start'
+          }
           ]
-        };
+        }
 
         var linechartOptions = {
           title: {
@@ -88,45 +71,44 @@ export default {
           tooltips: {
             enabled: true
           }
-        };
+        }
 
         var linechart = new Chart(lineCanvas, {
           type: 'line',
-          data:lineData,
+          data: lineData,
           options: linechartOptions
-        });
+        })
       }
 
-      axios.post("http://127.0.0.1:3000/data/getThreshold", {account: cookie})
-      .then(response => {
-        MAX = JSON.parse(response.data[0]["max"])
-        counts = JSON.parse(response.data[0]["origin"])
-        MIN = JSON.parse(response.data[0]["min"])
+      axios.post('http://127.0.0.1:3000/data/getThreshold', {account: cookie})
+        .then(response => {
+          MAX = JSON.parse(response.data[0]['max'])
+          counts = JSON.parse(response.data[0]['origin'])
+          MIN = JSON.parse(response.data[0]['min'])
 
-        let d = new Date();
-        let m = d.getMinutes();
-        let h = d.getHours();
-        let interval = 20 / counts.length;
-        for(let i = counts.length - 1; i >= 0; i--){
-          let cm = Math.floor((m - (interval * i)));
-          if(cm < 0){
-            cm = cm + 60;
+          let d = new Date()
+          let m = d.getMinutes()
+          let h = d.getHours()
+          let interval = 20 / counts.length
+          for (let i = counts.length - 1; i >= 0; i--) {
+            let cm = Math.floor((m - (interval * i)))
+            if (cm < 0) {
+              cm = cm + 60
 
-            lineLabel.push((h - 1) + ":" + cm);
+              lineLabel.push((h - 1) + ':' + cm)
+            } else {
+              lineLabel.push(h + ':' + cm)
+            }
           }
-          else{
-            lineLabel.push(h + ":" + cm);
-          }
-        }
 
-        lineChart();
-      })
-      .catch(e => {console.log(e)})
+          lineChart()
+        })
+        .catch(e => { console.log(e) })
 
       var most5 = []
       var val = []
 
-      function barChart(){
+      function barChart () {
         var trace1 = {
           y: val[0],
           type: 'box',
@@ -140,7 +122,7 @@ export default {
             }
           },
           boxpoints: 'suspectedoutliers'
-        };
+        }
 
         var trace2 = {
           y: val[1],
@@ -155,8 +137,8 @@ export default {
             }
           },
           boxpoints: 'suspectedoutliers'
-        };
-            
+        }
+
         var trace3 = {
           y: val[2],
           type: 'box',
@@ -170,8 +152,8 @@ export default {
             }
           },
           boxpoints: 'suspectedoutliers'
-        };
-            
+        }
+
         var trace4 = {
           y: val[3],
           type: 'box',
@@ -185,7 +167,7 @@ export default {
             }
           },
           boxpoints: 'suspectedoutliers'
-        };
+        }
 
         var trace5 = {
           y: val[4],
@@ -200,42 +182,42 @@ export default {
             }
           },
           boxpoints: 'suspectedoutliers'
-        };
+        }
 
-        var data = [trace1, trace2, trace3, trace4, trace5];
-            
+        var data = [trace1, trace2, trace3, trace4, trace5]
+
         var layout = {
           title: 'Most 5 IP'
-        };
-            
-        Plotly.newPlot('popChart', data, layout);
+        }
+
+        Plotly.newPlot('popChart', data, layout)
       }
 
-      axios.post("http://127.0.0.1:3000/data/getMost5", {account: cookie})
-      .then(response => {
-        most5 = response.data.ip;
+      axios.post('http://127.0.0.1:3000/data/getMost5', {account: cookie})
+        .then(response => {
+          most5 = response.data.ip
 
-        for(let i = 0; i < most5.length; i++){
-          axios.post("http://127.0.0.1:3000/data/getListByIp", {account: cookie, ip: most5[i]})
-          .then(res => {
-            val.push(res.data["ip"])
-            if(i == most5.length - 1){
-              barChart();
-            }
-          })
-          .catch(err => console.log(err))
-        }
-      })
-      .catch(error => console.log(error))
-      
+          for (let i = 0; i < most5.length; i++) {
+            axios.post('http://127.0.0.1:3000/data/getListByIp', {account: cookie, ip: most5[i]})
+              .then(res => {
+                val.push(res.data['ip'])
+                if (i == most5.length - 1) {
+                  barChart()
+                }
+              })
+              .catch(err => console.log(err))
+          }
+        })
+        .catch(error => console.log(error))
+
       var location = []
       var packetCount = []
 
       // This is zoomchart part, not working
-      function geoChart(){
+      function geoChart () {
         var options = {
           area: { height: 700},
-          container: document.getElementById("geoChart"),
+          container: document.getElementById('geoChart'),
           data: {
             preloaded: {
               nodes: location,
@@ -245,34 +227,34 @@ export default {
           events: {
             // 클릭 이벤트! 누르면 정보를 띄울수 있을것으로 생각됨
             onClick: function (event, args) {
-              if (args.clickNode) alert("You clicked on " + args.clickNode.data.id + ".");
-              if (args.clickLink) alert("You clicked on a link.");
+              if (args.clickNode) alert('You clicked on ' + args.clickNode.data.id + '.')
+              if (args.clickLink) alert('You clicked on a link.')
             }
           },
           layers: [
             {
               // 스타일을 결정하는 부분 입니다.
-              name: "Points",
-              type: "items",
+              name: 'Points',
+              type: 'items',
               style: {
                 nodeStyleFunction: function (node) {
-                  node.label = node.data.id;
+                  node.label = node.data.id
                 },
                 linkStyleFunction: function (link) {
-                  link.label = link.data.traffic;
+                  link.label = link.data.traffic
                 },
                 node: {
-                  fillColor: "#09c",
-                  lineColor: "#07a",
+                  fillColor: '#09c',
+                  lineColor: '#07a',
                   lineWidth: 2
                 },
                 nodeLabel: {
-                  backgroundStyle: { fillColor: "black" },
-                  textStyle: { fillColor: "white" }
+                  backgroundStyle: { fillColor: 'black' },
+                  textStyle: { fillColor: 'white' }
                 },
                 linkLabel: {
-                  backgroundStyle: { fillColor: "rgba(0, 0, 0, 0.6)" },
-                  textStyle: { fillColor: "white" }
+                  backgroundStyle: { fillColor: 'rgba(0, 0, 0, 0.6)' },
+                  textStyle: { fillColor: 'white' }
                 }
               }
             }
@@ -283,37 +265,37 @@ export default {
             initialLng: 126.977966,
             initialZoom: 4,
             minZoom: 2
-          },  // 더블클릭 불가능 지정
+          }, // 더블클릭 불가능 지정
           advanced: { pointer: { noClickOnDoubleClick: false } }
-        };
-        var chart = new GeoChart(options);
+        }
+        var chart = new GeoChart(options)
       }
 
-      axios.post("http://127.0.0.1:3000/data/geo", {account: cookie})
-      .then(response => {
-        let get = response.data
+      axios.post('http://127.0.0.1:3000/data/geo', {account: cookie})
+        .then(response => {
+          let get = response.data
 
-        for(let i = 0; i < get.length; i++){
+          for (let i = 0; i < get.length; i++) {
           // verizon api
-          axios.get("http://www.mapquestapi.com/geocoding/v1/address?key=0VVYrAu2CsGcrHAfmBk4Qs2JGmErZ2dd&location=" + get[i]["nation"])
-          .then(response =>{
-            let coordinate = response.data.results[0]["locations"][0]["latLng"]
-            location.push({"id": get[i]["nation"], "coordinates": [coordinate["lng"], coordinate["lat"]]})
-            packetCount.push({"from": "south korea", "to": get[i]["nation"], "traffic": get[i]["abnormal_count"]})
+            axios.get('http://www.mapquestapi.com/geocoding/v1/address?key=0VVYrAu2CsGcrHAfmBk4Qs2JGmErZ2dd&location=' + get[i]['nation'])
+              .then(response => {
+                let coordinate = response.data.results[0]['locations'][0]['latLng']
+                location.push({'id': get[i]['nation'], 'coordinates': [coordinate['lng'], coordinate['lat']]})
+                packetCount.push({'from': 'south korea', 'to': get[i]['nation'], 'traffic': get[i]['abnormal_count']})
 
-            if(i == get.length - 1){
-              console.log(location)
-              console.log(packetCount)
-              geoChart()
-            }
-          })
-          .catch(err => console.log(err))
-        }
-      })
-      .catch(err => console.log(err))
+                if (i == get.length - 1) {
+                  console.log(location)
+                  console.log(packetCount)
+                  geoChart()
+                }
+              })
+              .catch(err => console.log(err))
+          }
+        })
+        .catch(err => console.log(err))
     }).catch((err) => {
-      console.log(err);
-    });
+      console.log(err)
+    })
   }
 }
 </script>
@@ -330,8 +312,25 @@ export default {
   border-style: outset;
 }
 
+.container {
+  margin-left: 30px;
+}
+.top {
+  margin-top: 80px;
+  display: flex;
+}
+.top > div {
+  font-size: 30px;
+  padding-top: 6px;
+}
+
+img {
+  width: 62px;
+  height: 62px;
+}
+
 #DVSL-interaction {
-  
+
 }
 
 </style>
