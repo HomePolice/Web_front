@@ -48,7 +48,7 @@ export default {
     validate: function (event){
       let id = document.getElementById("account").value
       let pw = document.getElementById("password").value
-      axios.post("http://127.0.0.1:3000/users/validation", {account: id, password: pw})
+      axios.post("http://13.209.93.63:3000/users/validation", {account: id, password: pw})
       .then(response => {
         if(response.data["success"]){
           // HTML5 Localstorage 활용
