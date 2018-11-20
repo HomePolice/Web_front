@@ -314,7 +314,7 @@ export default {
     width: 37%;
     // background-color: dodgerblue;
     text-align: center;
-    vertical_align: center;
+    vertical-align: center;
   }
 
   .summary {
