@@ -172,7 +172,7 @@ export default {
     },
     fetchEventsList: function () {
       localforage.getItem('account').then((cookie) => {
-        axios.post('http://127.0.0.1:3000/data/getLatestIp', {account: cookie})
+        axios.post('http://13.209.93.63:3000/data/getLatestIp', {account: cookie})
           .then(response => {
             if (response.data[0]['dest_ip'] === this.lIP || this.lIP.length <= 0) {
               this.lIP = response.data[0]['dest_ip']
@@ -194,20 +194,20 @@ export default {
   },
   mounted () {
     localforage.getItem('account').then((cookie) => {
-      axios.post('http://127.0.0.1:3000/data/lists', {account: cookie})
+      axios.post('http://13.209.93.63:3000/data/lists', {account: cookie})
         .then(response => {
           this.lists = response.data
         })
         .catch(e => { console.log(e) })
 
-      axios.post('http://127.0.0.1:3000/data/getLatestIp', {account: cookie})
+      axios.post('http://13.209.93.63:3000/data/getLatestIp', {account: cookie})
         .then(response => {
           this.lIP = response.data[0]['dest_ip']
           this.lNT = response.data[0]['nation']
         })
         .catch(e => { console.log(e) })
 
-      axios.post('http://127.0.0.1:3000/data/rank', {account: cookie})
+      axios.post('http://13.209.93.63:3000/data/rank', {account: cookie})
         .then(response => {
           this.rank = response.data[0]['rank']
         })
@@ -217,7 +217,7 @@ export default {
       let edges = []
       let nation = []
 
-      axios.post('http://127.0.0.1:3000/data/get2HopNet', {account: cookie})
+      axios.post('http://13.209.93.63:3000/data/get2HopNet', {account: cookie})
         .then(response => {
           let ids = 1
           let t_edges = response.data.edge
