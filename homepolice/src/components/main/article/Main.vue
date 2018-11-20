@@ -490,4 +490,8 @@ export default {
     width: 100%;
   }
 
+  .gage_chart img {
+    margin-top:30px
+  }
+
 </style>
