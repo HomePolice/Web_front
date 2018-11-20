@@ -46,7 +46,7 @@ export default {
     validate: function (event){
       let id = document.getElementById("id").value
       let pw = document.getElementById("pw").value
-      axios.post("http://127.0.0.1:3000/users/", {account: id, password: pw})
+      axios.post("http://13.209.93.63:3000/users/", {account: id, password: pw})
       .then(response => {
         if(response.data["success"]){
           console.log(response.data)
