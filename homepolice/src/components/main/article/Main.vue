@@ -24,7 +24,7 @@
         <img src="../../../assets/image/60.png" class="rank_img"/>
       </div>
 
-      <div class="summary"> 
+      <div class="summary">
         <div class="summary_grade">
           당신의 스마트 홈
           <br>
@@ -61,7 +61,7 @@
       <div class="gage_chart">
         <img src="../../../assets/image/20.png" class="rank_img"/>
       </div>
-      
+
       <div class="summary">
         <div class="summary_grade">
           당신의 스마트 홈
@@ -149,166 +149,158 @@
 <script>
 // 메인 페이지 컴포넌트
 
-import axios from 'axios';
-import localforage from 'localforage';
+import axios from 'axios'
+import localforage from 'localforage'
 import Message from 'vue-m-message'
 
 export default {
   name: 'main',
-  data(){
+  data () {
     return {
       lists: [],
       rank: 0,
-      lIP: "",
-      lNT: "",
+      lIP: '',
+      lNT: '',
       timer: ''
     }
   },
   methods: {
-    registerExcept: function(event) {
+    registerExcept: function (event) {
       // 예외등록 차단등록 리스트 중 하나 특정할 수 있으면 바로 구현 가능
-      alert("예외 등록되었습니다.")
+      alert('예외 등록되었습니다.')
     },
-    registerDrop: function(event) {
-      alert("차단 등록되었습니다.")
+    registerDrop: function (event) {
+      alert('차단 등록되었습니다.')
     },
-    fetchEventsList: function() {
+    fetchEventsList: function () {
       localforage.getItem('account').then((cookie) => {
-        axios.post("http://127.0.0.1:3000/data/getLatestIp", {account: cookie})
-        .then(response => {
-          if(response.data[0]["dest_ip"] === this.lIP || this.lIP.length <= 0){
-            this.lIP = response.data[0]["dest_ip"]
-            this.lNT = response.data[0]["nation"]
-          }
-          else{
-            Message.error("새로운 아이피 출연!") 
-            this.lIP = response.data[0]["dest_ip"]
-            this.lNT = response.data[0]["nation"]
-          }
-        })
-        .catch(e => {console.log(e)})
+        axios.post('http://127.0.0.1:3000/data/getLatestIp', {account: cookie})
+          .then(response => {
+            if (response.data[0]['dest_ip'] === this.lIP || this.lIP.length <= 0) {
+              this.lIP = response.data[0]['dest_ip']
+              this.lNT = response.data[0]['nation']
+            } else {
+              Message.error('새로운 아이피 출연!')
+              this.lIP = response.data[0]['dest_ip']
+              this.lNT = response.data[0]['nation']
+            }
+          })
+          .catch(e => { console.log(e) })
       })
     },
-    cancelAutoUpdate: function() { clearInterval(this.timer) }
+    cancelAutoUpdate: function () { clearInterval(this.timer) }
   },
-  created: function() {
-    this.fetchEventsList();
+  created: function () {
+    this.fetchEventsList()
     this.timer = setInterval(this.fetchEventsList, 5000)
   },
-  mounted() {
+  mounted () {
     localforage.getItem('account').then((cookie) => {
-      axios.post("http://127.0.0.1:3000/data/lists", {account: cookie})
-      .then(response => {
-        this.lists   = response.data
-      })
-      .catch(e => {console.log(e)})
+      axios.post('http://127.0.0.1:3000/data/lists', {account: cookie})
+        .then(response => {
+          this.lists = response.data
+        })
+        .catch(e => { console.log(e) })
 
-      axios.post("http://127.0.0.1:3000/data/getLatestIp", {account: cookie})
-      .then(response => {
-        this.lIP = response.data[0]["dest_ip"]
-        this.lNT = response.data[0]["nation"]
-      })
-      .catch(e => {console.log(e)})
+      axios.post('http://127.0.0.1:3000/data/getLatestIp', {account: cookie})
+        .then(response => {
+          this.lIP = response.data[0]['dest_ip']
+          this.lNT = response.data[0]['nation']
+        })
+        .catch(e => { console.log(e) })
 
-      axios.post("http://127.0.0.1:3000/data/rank", {account: cookie})
-      .then(response => {
-      this.rank = response.data[0]["rank"]
-      })
-      .catch(err => console.log(err))
+      axios.post('http://127.0.0.1:3000/data/rank', {account: cookie})
+        .then(response => {
+          this.rank = response.data[0]['rank']
+        })
+        .catch(err => console.log(err))
 
       let nodes = []
       let edges = []
       let nation = []
 
-      axios.post("http://127.0.0.1:3000/data/get2HopNet", {account: cookie})
-      .then(response => {
-        let ids = 1;
-        let t_edges = response.data.edge
-        for(let i = 0; i < t_edges.length; i++){
-          for(let j = 0; j < t_edges[i].length; j++){
-            axios.post("http://api.ipstack.com/" + t_edges[i][j]["properties"]["destIp"] + "?access_key=7fc9c7cb577799e568e7da72bbdc3fbf")
-            .then(response => {
-              if(response.data.country_name == null){
-                t_edges[i][j]["properties"]["nation"] = "south korea"
-              }
-              else{
-                t_edges[i][j]["properties"]["nation"] = response.data.country_name
-              }
-              nation.push(t_edges[i][j]["properties"]["nation"])
-              nodes.push({"id": t_edges[i][j]["properties"]["nation"]})
-              
-              if(i == t_edges.length -1 && j == t_edges[i].length -1){
-                for(let i = 0; i < t_edges.length; i++){
-                  for(let j = 0; j < t_edges[i].length; j++){
-                    if(t_edges[i][j]["properties"]["sourceIp"] === "10.0.0.95"){
-                      nodes.push({"id": t_edges[i][j]["properties"]["sourceIp"], "name": "camera"})
+      axios.post('http://127.0.0.1:3000/data/get2HopNet', {account: cookie})
+        .then(response => {
+          let ids = 1
+          let t_edges = response.data.edge
+          for (let i = 0; i < t_edges.length; i++) {
+            for (let j = 0; j < t_edges[i].length; j++) {
+              axios.post('http://api.ipstack.com/' + t_edges[i][j]['properties']['destIp'] + '?access_key=7fc9c7cb577799e568e7da72bbdc3fbf')
+                .then(response => {
+                  if (response.data.country_name == null) {
+                    t_edges[i][j]['properties']['nation'] = 'south korea'
+                  } else {
+                    t_edges[i][j]['properties']['nation'] = response.data.country_name
+                  }
+                  nation.push(t_edges[i][j]['properties']['nation'])
+                  nodes.push({'id': t_edges[i][j]['properties']['nation']})
+
+                  if (i == t_edges.length - 1 && j == t_edges[i].length - 1) {
+                    for (let i = 0; i < t_edges.length; i++) {
+                      for (let j = 0; j < t_edges[i].length; j++) {
+                        if (t_edges[i][j]['properties']['sourceIp'] === '10.0.0.95') {
+                          nodes.push({'id': t_edges[i][j]['properties']['sourceIp'], 'name': 'camera'})
+                        } else {
+                          nodes.push({'id': t_edges[i][j]['properties']['sourceIp']})
+                        }
+                        edges.push({'id': ids, 'from': '10.0.0.95', 'to': t_edges[i][j]['properties']['nation']})
+                        ids += 1
+                        edges.push({'id': ids, 'from': t_edges[i][j]['properties']['nation'], 'to': t_edges[i][j]['properties']['destIp']})
+                        ids += 1
+                      }
                     }
-                    else{
-                      nodes.push({"id": t_edges[i][j]["properties"]["sourceIp"]})
+                    nation = nation.reduce(function (a, b) { if (a.indexOf(b) < 0)a.push(b); return a }, [])
+                    for (let i = 0; i < nation.length; i++) {
+                      nodes.push({'id': nation[i], 'name': 'nation'})
                     }
-                    edges.push({"id": ids, "from": "10.0.0.95", "to": t_edges[i][j]["properties"]["nation"]})
-                    ids += 1
-                    edges.push({"id": ids, "from": t_edges[i][j]["properties"]["nation"], "to": t_edges[i][j]["properties"]["destIp"]})
-                    ids += 1
-                  }
-                }
-                nation = nation.reduce(function(a,b){if(a.indexOf(b)<0)a.push(b);return a;},[]);
-                for(let i = 0; i < nation.length; i++){
-                  nodes.push({"id": nation[i], "name": "nation"})
-                }
 
-                nodes = Object.values(nodes.reduce((acc,cur)=>Object.assign(acc,{[cur.id]:cur}),{}))
-                  
-                function nodeStyle(node) {
-                  node.label = node.data.id;
-                  // 노드별 이미지 등록법
-                  if(node.data.name == "camera"){
-                      node.fillColor = "rgba(0, 0, 200, 0.2)";
-                      node.image = "../../../assets/image/web-cam.png";
-                  }
-                  else if(node.data.name == "nation"){
-                    node.fillColor = "rgba(200, 0, 0, 0.2)";
-                  }
-                  else{
-                      node.fillColor = "rgba(0, 200, 0, 0.2)";
-                  }
-                }
+                    nodes = Object.values(nodes.reduce((acc, cur) => Object.assign(acc, {[cur.id]: cur}), {}))
 
-                function linkStyle(link) {
-                  link.fromDecoration = "circle";
-                  link.toDecoration = "arrow";
-                  link.fillColor = "#de672c";
-                }
-
-
-                var nc = new NetChart({
-                  container: document.getElementById("netchart"),
-                  area: { height: 350 },
-                  data: { // 경로 사용 가능 ex) xxx.csv or .json
-                    preloaded: {
-                      nodes: nodes,
-                      links: edges
+                    function nodeStyle (node) {
+                      node.label = node.data.id
+                      // 노드별 이미지 등록법
+                      if (node.data.name == 'camera') {
+                        node.fillColor = 'rgba(0, 0, 200, 0.2)'
+                        node.image = '../../../assets/image/web-cam.png'
+                      } else if (node.data.name == 'nation') {
+                        node.fillColor = 'rgba(200, 0, 0, 0.2)'
+                      } else {
+                        node.fillColor = 'rgba(0, 200, 0, 0.2)'
+                      }
                     }
-                  },
-                  interaction: { selection: { lockNodesOnMove: true } },
-                  style: {
-                    nodeStyleFunction: nodeStyle,
-                    linkStyleFunction: linkStyle
+
+                    function linkStyle (link) {
+                      link.fromDecoration = 'circle'
+                      link.toDecoration = 'arrow'
+                      link.fillColor = '#de672c'
+                    }
+
+                    var nc = new NetChart({
+                      container: document.getElementById('netchart'),
+                      area: { height: 350 },
+                      data: { // 경로 사용 가능 ex) xxx.csv or .json
+                        preloaded: {
+                          nodes: nodes,
+                          links: edges
+                        }
+                      },
+                      interaction: { selection: { lockNodesOnMove: true } },
+                      style: {
+                        nodeStyleFunction: nodeStyle,
+                        linkStyleFunction: linkStyle
+                      }
+                    })
                   }
-                });
-              }
-            })
+                })
+            }
           }
-        }
-
-        
-      })
-      .catch(e => {console.log(e)})
+        })
+        .catch(e => { console.log(e) })
     }).catch((err) => {
-      console.log(err);
-    });
+      console.log(err)
+    })
   },
-  beforeDestroy() {
+  beforeDestroy () {
     clearInterval(this.timer)
   }
 }

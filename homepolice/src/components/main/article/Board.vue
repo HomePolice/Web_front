@@ -23,7 +23,9 @@
     <div>
 
     </div>
-    <router-view name="Sec"/>
+    <transition name="sec" mode="out-in">
+      <router-view name="Sec" class="sec"/>
+    </transition>
   </div>
 </template>
 
@@ -97,5 +99,23 @@ export default {
 
   .manual {
     font-family: AppleSDGothicNeo;
+    color: #757575;
+  }
+
+  .sec-enter-active {
+    transition: all 0.5s ease;
+  }
+
+  .sec-enter {
+    opacity: 0;
+    /*transform: translateY(-30vh);*/
+  }
+
+  .sec-leave-active {
+    transition: all 0.5s ease;
+  }
+
+  .sec-leave-to {
+    opacity: 0;
   }
 </style>

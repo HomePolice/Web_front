@@ -8,7 +8,9 @@
         <Nav></Nav>
       </div>
       <div class="article">
-        <router-view name="Article"/>
+        <transition name="article" mode="out-in">
+          <router-view name="Article"/>
+        </transition>
       </div>
     </div>
   </div>
@@ -60,6 +62,23 @@ export default {
 
   .article {
     width: 100%;
+  }
+
+  .article-enter-active {
+    transition: all 0.5s ease;
+  }
+
+  .article-enter {
+    opacity: 0;
+    /*transform: translateY(-30vh);*/
+  }
+
+  .article-leave-active {
+    transition: all 0.5s ease;
+  }
+
+  .article-leave-to {
+    opacity: 0;
   }
 
 </style>

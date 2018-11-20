@@ -330,6 +330,11 @@ img {
   height: 62px;
 }
 
+.manual {
+  font-family: AppleSDGothicNeo;
+  color: #757575;
+}
+
 #DVSL-interaction {
 
 }
