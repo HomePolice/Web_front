@@ -81,11 +81,18 @@ export default {
         })
       }
 
-      axios.post('http://13.209.93.63:3000/data/getThreshold', {account: cookie})
+      axios.post('http://127.0.0.1:3000/data/getThreshold', {account: cookie})
         .then(response => {
-          MAX = JSON.parse(response.data[0]['max'])
-          counts = JSON.parse(response.data[0]['origin'])
-          MIN = JSON.parse(response.data[0]['min'])
+          for(let i = 0; i < response.data.length; i++){
+            for(let j = 0; j < JSON.parse(response.data[i]["max"]).length; j++){
+              MAX.push(JSON.parse(response.data[i]["max"])[j])
+              counts.push(JSON.parse(response.data[i]['origin'])[j])
+              MIN.push(JSON.parse(response.data[i]['min'])[j])
+            }
+          }
+          console.log("MAX", MAX)
+          console.log("origin", counts)
+          console.log("MIN", MIN)
 
           let d = new Date()
           let m = d.getMinutes()
@@ -194,12 +201,12 @@ export default {
         Plotly.newPlot('popChart', data, layout)
       }
 
-      axios.post('http://13.209.93.63:3000/data/getMost5', {account: cookie})
+      axios.post('http://127.0.0.1:3000/data/getMost5', {account: cookie})
         .then(response => {
           most5 = response.data.ip
 
           for (let i = 0; i < most5.length; i++) {
-            axios.post('http://13.209.93.63:3000/data/getListByIp', {account: cookie, ip: most5[i]})
+            axios.post('http://127.0.0.1:3000/data/getListByIp', {account: cookie, ip: most5[i]})
               .then(res => {
                 val.push(res.data['ip'])
                 if (i == most5.length - 1) {
@@ -272,7 +279,7 @@ export default {
         var chart = new GeoChart(options)
       }
 
-      axios.post('http://13.209.93.63:3000/data/geo', {account: cookie})
+      axios.post('http://127.0.0.1:3000/data/geo', {account: cookie})
         .then(response => {
           let get = response.data
 

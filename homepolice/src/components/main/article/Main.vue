@@ -159,7 +159,8 @@ export default {
       rank: 0,
       lIP: '',
       lNT: '',
-      timer: ''
+      timer: '',
+      latest: ''
     }
   },
   methods: {
@@ -172,18 +173,48 @@ export default {
     },
     fetchEventsList: function () {
       localforage.getItem('account').then((cookie) => {
-        axios.post('http://13.209.93.63:3000/data/getLatestIp', {account: cookie})
-          .then(response => {
-            if (response.data[0]['dest_ip'] === this.lIP || this.lIP.length <= 0) {
-              this.lIP = response.data[0]['dest_ip']
-              this.lNT = response.data[0]['nation']
-            } else {
-              Message.error('새로운 아이피 출연!')
-              this.lIP = response.data[0]['dest_ip']
-              this.lNT = response.data[0]['nation']
+        axios.post('http://127.0.0.1:3000/data/getLatestIp', {account: cookie})
+        .then(response => {
+          if ((response.data[0]['dest_ip'] === this.lIP && response.data[0]['occured_time'] == this.latest) || this.lIP.length <= 0) {
+            this.lIP = response.data[0]['dest_ip']
+            this.lNT = response.data[0]['nation']
+            this.latest = response.data[0]['occured_time']
+
+            if(response.data[0]['nation'] == null){
+              axios.post('http://api.ipstack.com/' + response.data[0]['dest_ip'] + '?access_key=7fc9c7cb577799e568e7da72bbdc3fbf')
+              .then(res => {
+                if (res.data.country_name == null || res.data.country_name == "Republic of Korea") {
+                this.lNT = 'south korea'
+                } 
+                else {
+                  axios.post('http://127.0.0.1:3000/data/registerNation', {account: cookie, nation: res.data.country_name, ip: this.lIP})
+                  .then(res => {
+                    this.lNT = res.data.country_name
+                  })
+                }
+              })
             }
-          })
-          .catch(e => { console.log(e) })
+          } else {
+            this.lIP = response.data[0]['dest_ip']
+            this.latest = response.data[0]['occured_time']
+            axios.post('http://api.ipstack.com/' + response.data[0]['dest_ip'] + '?access_key=7fc9c7cb577799e568e7da72bbdc3fbf')
+            .then(res => {
+              if (res.data.country_name == null || res.data.country_name == "Republic of Korea") {
+                this.lNT = 'south korea'
+              } 
+              else {
+                this.lNT = res.data.country_name
+              }
+              axios.post('http://127.0.0.1:3000/data/registerNation', {account: cookie, nation: this.lNT, ip: this.lIP})
+              .then(pop => console.log(pop))
+              .catch(err => {
+                console.log(err)
+              })
+              Message.error('새로운 아이피 출연!');
+            })
+          }
+        })
+        .catch(e => { console.log(e) })
       })
     },
     cancelAutoUpdate: function () { clearInterval(this.timer) }
@@ -194,20 +225,20 @@ export default {
   },
   mounted () {
     localforage.getItem('account').then((cookie) => {
-      axios.post('http://13.209.93.63:3000/data/lists', {account: cookie})
+      axios.post('http://127.0.0.1:3000/data/lists', {account: cookie})
         .then(response => {
           this.lists = response.data
         })
         .catch(e => { console.log(e) })
 
-      axios.post('http://13.209.93.63:3000/data/getLatestIp', {account: cookie})
+      axios.post('http://127.0.0.1:3000/data/getLatestIp', {account: cookie})
         .then(response => {
           this.lIP = response.data[0]['dest_ip']
           this.lNT = response.data[0]['nation']
         })
         .catch(e => { console.log(e) })
 
-      axios.post('http://13.209.93.63:3000/data/rank', {account: cookie})
+      axios.post('http://127.0.0.1:3000/data/rank', {account: cookie})
         .then(response => {
           this.rank = response.data[0]['rank']
         })
@@ -217,7 +248,7 @@ export default {
       let edges = []
       let nation = []
 
-      axios.post('http://13.209.93.63:3000/data/get2HopNet', {account: cookie})
+      axios.post('http://127.0.0.1:3000/data/get2HopNet', {account: cookie})
         .then(response => {
           let ids = 1
           let t_edges = response.data.edge
