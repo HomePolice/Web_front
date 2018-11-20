@@ -130,7 +130,7 @@ export default {
   .bottom {
     text-align: center;
     font-family: AppleSDGothicNeo;
-    margin-top: 450px;
+    margin-top: 200px;
   }
 
   .signup {
