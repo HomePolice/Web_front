@@ -109,16 +109,14 @@
         <div class="bottom_head_item">
           탐지 IP
           <div class="count">
-            12
-            new
+            {{lists.length}}
           </div>
         </div>
 
         <div class="bottom_head_item">
           차단 IP
           <div class="count">
-            2
-            old
+            0
           </div>
         </div>
       </div>
