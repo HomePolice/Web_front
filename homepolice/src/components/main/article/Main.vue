@@ -481,7 +481,7 @@ export default {
   }
 
   .rank_img {
-    inline-block;
+    overflow: hidden;
     width: 100%;
   }
 
