@@ -22,7 +22,7 @@
       </div>
       <div class="content">
         <div class="content-title">
-          (3) 한국인터넷진흥원에 피해사실을 알려주세요. 대응 방법을 알려줄 거에요.
+          (3) 한국인터넷진흥원에 피해사실을 알려주세요. 대응 방법을 알려줍니다.
         </div>
         <div class="content-body">
           <a href="https://www.krcert.or.kr/consult/hacking.do" style="color: #3399ff;">한국인터넷진흥원에 신고하러 가기</a>
